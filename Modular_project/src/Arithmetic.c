@@ -4,7 +4,6 @@
 
 
 /* Функция для сложения векторов
- *
  * Function for adding vectors*/
 double* doSumVector(double *x, double *y, int size){
 	double *result;

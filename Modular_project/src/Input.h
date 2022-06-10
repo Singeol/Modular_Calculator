@@ -6,7 +6,4 @@
 
 data* inputPN(FILE *fin);
 
-void calcList(list l1, list l2);
-
-void calcQueue(queue q1, queue q2);
 #endif /* INPUT_H_ */

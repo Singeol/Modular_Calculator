@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/* Функция для инициализации очереди
+ * Function for initialize the queue
+ */
 void init_queue(queue *q) {
 	q->head = NULL;
 	q->tail = NULL;

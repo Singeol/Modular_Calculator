@@ -1,22 +1,23 @@
 /*
  ============================================================================
  Name        : Modular_project.c
- Author      : 
+ Author      : Semyon Mikhailov
  Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
+ Copyright   :
+ Description :
  ============================================================================
  */
 
 
-#include "Arithmetic.h"
-#include "Structs.h"
-#include "Lists.h"
-#include "Queue.h"
-#include "Stack.h"
-#include "Input.h"
+#include "Arithmetic.h" // Подключаем библиотеку с операциями дял вычисления
+#include "Structs.h" // Подключаем библиотеку для определения структур
+#include "Lists.h" // Подключаем библиотеку для работы со списками
+#include "Queue.h" // Подключаем библиотеку для работы с очередями
+#include "Stack.h" // Подключаем библиотеку для работы со стеком
+#include "Input.h" // Подключаем библиотеку для чтения данных из текстового файла
 #include <stdio.h>
 #include <stdlib.h>
+
 
 FILE *fin, *fout; //Declare variables for work with files
 
@@ -26,32 +27,34 @@ FILE *fin, *fout; //Declare variables for work with files
 int main(int argc, char* argv[]){
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
-	double nm;
-	char input[259], output[259], in[256], operation, b, notation, structure; // Переменные для хранения имени файлов
-	data *var;
-	stack s1;
-	list l1, l2;
-	queue q1, q2;
+	double nm; // Объявляем перемнную для работы со стеком
+	// Переменные для хранения имени файлов, строки стекаЮ операции, продолжения работы, вариантов запуска.
+	char input[259], output[259], in[256], operation, b, notation, structure;
+	data *var; // Переменная для хранения промежуточных данных для списка и очереди
+	stack s1; // Перемнная для использования стека
+	list l1, l2; // Переменные для входного и выходного списков
+	queue q1, q2; // Переменные для входной и выходной очередей
+	// Основной рабочий цикл
 	do {
 		printf("С каким режимом вы хотите работать? p - нормальная польска нотация(список, очередь), n - обратная польская нотация(стек)\n");
 		scanf(" %c", &notation);
 		switch (notation) {
-			case 'n':
+			case 'n': // Раздел для работы со стеком
 				printf("Выбран стек для работы\n");
 				structure = 's';
-				init_stack(&s1);
+				init_stack(&s1); // Инициализируем стек
 				puts("Enter filename to input");
 				scanf("%s", input);
 				puts("Enter filename to output");
 				scanf("%s", output);
-				fin = fopen(input, "r");
-				if ((fout = fopen(output, "a")) == NULL) {
+				fin = fopen(input, "r"); // Открываем файл для чтения входных данных
+				if ((fout = fopen(output, "a")) == NULL) { // Открываем файл для записи в него
 					fout = fopen(output, "w");
 				}
-				while (feof(fin) == 0) {
+				while (feof(fin) == 0) { // Главный цикл для чтения, пока файл не закончится
 					fscanf(fin, "%s", in);
-						if (atof(in) == 0) {
-							operation = in[0];
+						if (atof(in) == 0) { // Проверка является ли строка числом с плавающей запятой
+							operation = in[0]; // Если это операция, то выполняем операцию с числами на стеке
 							switch (operation) {
 								case '+':
 									push(&s1, *doSum(pop(&s1), pop(&s1)));
@@ -76,33 +79,34 @@ int main(int argc, char* argv[]){
 									break;
 							}
 						}
-						else {
+						else { // Если это оказалось число, то записываем его в стек
 							nm = atof(in);
 							push(&s1, nm);
 						}
 					}
-				fclose(fin);
+				fclose(fin); // Закрываем входной и выходной файлы
 				fclose(fout);
 				break;
-			case 'p':
+			case 'p': // Раздел для работы с нормальной польской нотацией
 				printf("С какой структурой вы хотите работать? l - список, q - очередь\n");
 				scanf(" %c", &structure);
 				switch (structure) {
-					case 'l':
-						init_list(&l1);
+					case 'l': // Раздел для работы со списками
+						init_list(&l1); // Инициализируем входной и выходной списки
 						init_list(&l2);
 						puts("Enter filename to input");
 						scanf("%s", input);
 						puts("Enter filename to output");
 						scanf("%s", output);
-						fin = fopen(input, "r");
-						var = malloc(sizeof(data));
-						while (feof(fin) == 0) {
+						fin = fopen(input, "r"); // Открываем текстовый файл для чтения данных из него
+						var = malloc(sizeof(data)); // Выделяем память для промежуточной переменной
+						while (feof(fin) == 0) { // Пока входной файл не пустой, читаем и записываем в список
 							var = inputPN(fin);
 							pushElement(&l1, var);
 						}
-						fclose(fin);
+						fclose(fin); // Закрываем входной файл
 						l1.current = l1.head;
+						// Цикл для вычисления результата операций и записи в выходной список
 						while (l1.current != NULL){
 							var->mode = l1.current->mode;
 							var->operation = l1.current->operation;
@@ -155,6 +159,7 @@ int main(int argc, char* argv[]){
 						if ((fout = fopen(output, "a")) == NULL){
 							fout = fopen(output, "w");
 						}
+						// Цикл для записи результатов в выходной файл
 						while (l2.current != NULL){
 							switch (l2.current->mode){
 								case 'v':
@@ -194,7 +199,8 @@ int main(int argc, char* argv[]){
 							}
 							nextElement(&l2);
 						}
-						fclose(fout);
+						fclose(fout); // Закрываем выходной файл
+						// Очищаем списки для дальнейшей работы
 						while (l1.head != NULL){
 							deleteElement(&l1);
 						}
@@ -202,19 +208,21 @@ int main(int argc, char* argv[]){
 							deleteElement(&l2);
 						}
 						break;
-					case 'q':
-						init_queue(&q1);
+					case 'q': // Раздел для работы с очередью
+						init_queue(&q1); // Инициализируем входную и выходную очереди
 						init_queue(&q2);
 						puts("Enter filename to input");
 						scanf("%s", input);
 						puts("Enter filename to output");
 						scanf("%s", output);
-						fin = fopen(input, "r");
-						var = malloc(sizeof(data));
-						while (feof(fin) == 0) {
+						fin = fopen(input, "r"); // Открываем текстовый файл для чтения данных из него
+						var = malloc(sizeof(data)); // Выделяем память для промежуточной переменной
+						while (feof(fin) == 0) { // Пока входной файл не пустой, читаем и записываем в очередь
 							var = inputPN(fin);
 							enqueue(&q1, var);
 						}
+						fclose(fin); // Закрываем входной файл
+						// Цикл для вычисления результата операций и записи в выходной список
 						while ((var = dequeue(&q1)) != NULL) {
 							switch (var->mode) {
 								case 'v':
@@ -258,6 +266,7 @@ int main(int argc, char* argv[]){
 						if ((fout = fopen(output, "a")) == NULL) {
 							fout = fopen(output, "w");
 						}
+						// Цикл для записи результатов в выходной файл
 						while ((var = dequeue(&q2)) != NULL) {
 							switch (var->mode) {
 								case 'v':
@@ -294,9 +303,9 @@ int main(int argc, char* argv[]){
 										fprintf(fout, "%lf + %lf = %lf\n", *var->x, *var->y, *var->result);
 									}
 									else fprintf(fout, "%lf! = %lf\n", *var->x, *var->result);
-									}
 									break;
 							}
+						}
 						fclose(fout);
 						break;
 				}
