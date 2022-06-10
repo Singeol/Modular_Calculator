@@ -13,6 +13,7 @@
 #include "Structs.h"
 #include "Lists.h"
 #include "Queue.h"
+#include "Stack.h"
 #include "Input.h"
 #include "Output.h"
 #include <stdio.h>
